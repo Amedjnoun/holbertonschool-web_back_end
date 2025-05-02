@@ -3,7 +3,6 @@
 Simple pagination
 """
 import csv
-import math
 from typing import List, Tuple
 
 
@@ -46,11 +45,14 @@ class Server:
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """
-        Return the appropriate page of the dataset based on pagination parameters.
+        Return the appropriate page of the dataset based on pagination
+        parameters.
 
         Args:
-            page (int, optional): The page number (1-indexed). Defaults to 1.
-            page_size (int, optional): The number of items per page. Defaults to 10.
+            page (int, optional): The page number (1-indexed).
+                Defaults to 1.
+            page_size (int, optional): The number of items per page.
+                Defaults to 10.
 
         Returns:
             List[List]: The page of the dataset

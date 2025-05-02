@@ -46,11 +46,13 @@ class Server:
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """
-        Return the appropriate page of the dataset based on pagination parameters.
+        Return the appropriate page of the dataset based on pagination
+        parameters.
 
         Args:
             page (int, optional): The page number (1-indexed). Defaults to 1.
-            page_size (int, optional): The number of items per page. Defaults to 10.
+            page_size (int, optional): The number of items per page.
+                Defaults to 10.
 
         Returns:
             List[List]: The page of the dataset
@@ -73,14 +75,17 @@ class Server:
 
         Args:
             page (int, optional): The page number (1-indexed). Defaults to 1.
-            page_size (int, optional): The number of items per page. Defaults to 10.
+            page_size (int, optional): The number of items per page.
+                Defaults to 10.
 
         Returns:
             Dict[str, Any]: A dictionary with pagination information
         """
         data = self.get_page(page, page_size)
         total_items = len(self.dataset())
-        total_pages = math.ceil(total_items / page_size) if page_size > 0 else 0
+        total_pages = (
+            math.ceil(total_items / page_size) if page_size > 0 else 0
+        )
 
         # Calculate next page and previous page
         next_page = page + 1 if page < total_pages else None

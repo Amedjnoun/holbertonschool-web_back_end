@@ -1,41 +1,60 @@
+// import module fs to read file
 const fs = require('fs');
-const path = require('path');
 
-function countStudents(filePath) {
+function countStudents(path) {
+  let students = 0;
+  // try to read the file
   try {
-    // Ensure we're using the correct path, resolving relative paths if needed
-    const absolutePath = path.resolve(filePath);
-    
-    // Check if file exists before attempting to read
-    if (!fs.existsSync(absolutePath)) {
-      throw new Error('Cannot load the database');
+    const data = fs.readFileSync(path, 'utf-8');
+
+    // count number of non blank line
+    const lines = data.split('\n');
+
+    for (let counter = 0; counter < lines.length; counter += 1) {
+      if (lines[counter].length > 0) students += 1;
     }
-    
-    // Read file synchronously
-    const data = fs.readFileSync(absolutePath, 'utf8');
-    const lines = data.trim().split('\n');
-    
-    // Skip header line and empty lines
-    const students = lines.slice(1).filter((line) => line.trim().length > 0);
-    
-    console.log(`Number of students: ${students.length}`);
-    
-    // Group students by field
-    const fields = {};
-    students.forEach((student) => {
-      const [firstName, lastName, age, field] = student.split(',');
-      if (!fields[field]) {
-        fields[field] = { count: 0, names: [] };
+
+    // skip header if db is not empty
+    if (students > 0) {
+      students -= 1;
+    }
+
+    console.log(`Number of students: ${students}`);
+
+    // empty array for classroom
+    const classrooms = [];
+
+    // loop on db to find each classroom (except on first line (headers))
+    lines.slice(1).forEach((line) => {
+      const parts = line.split(',');
+      const field = parts[3];
+      // if field and classromm exist; add to the array
+      if (field && !classrooms.includes(field)) {
+        classrooms.push(field);
       }
-      fields[field].count += 1;
-      fields[field].names.push(firstName);
     });
-    
-    // Display students by field
-    Object.keys(fields).forEach((field) => {
-      console.log(`Number of students in ${field}: ${fields[field].count}. List: ${fields[field].names.join(', ')}`);
+
+    // for each classroom, create a empty array
+    const grouped = {};
+    classrooms.forEach((field) => {
+      grouped[field] = [];
     });
-  } catch (error) {
+
+    // loop again on db and add firstname to each classroom array
+    lines.slice(1).forEach((line) => {
+      const parts = line.split(',');
+      const firstname = parts[0];
+      const field = parts[3];
+      if (firstname && field) {
+        grouped[field].push(firstname);
+      }
+    });
+
+    // show results
+    classrooms.forEach((field) => {
+      console.log(`Number of students in ${field}: ${grouped[field].length}. List: ${grouped[field].join(', ')}`);
+    });
+  } catch (err) {
     throw new Error('Cannot load the database');
   }
 }
